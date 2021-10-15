@@ -63,3 +63,95 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+const galleryEl = document.querySelector('.gallery');
+const modalEL = document.querySelector('.js-lightbox');
+const closeModalBtn = document.querySelector('[data-action="close-lightbox"]');
+const modalOverlay = document.querySelector('.lightbox__overlay');
+const imgModal = document.querySelector(".lightbox__image");
+const sources = galleryItems.map(element => element.original);
+
+galleryEl.addEventListener('click', onGalleryImgClick);
+closeModalBtn.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', onModalOverlayClick);
+
+function createItemsGallery (gallery) {
+  return gallery.map(({ preview, original, description }) => {
+  return `<li class = "gallery__item">
+   <a class="gallery__link" href=${original}>
+   <img src=${preview} alt=${description} data-source="${original}" class = "gallery__image">
+   </a>
+   </li>`;
+}).join('');
+ }
+
+galleryEl.insertAdjacentHTML('beforeend', createItemsGallery(galleryItems));
+
+function onGalleryImgClick(event) {
+  event.preventDefault();
+  
+  if (!event.target.classList.contains("gallery__image")) {
+    return;
+  };
+
+  openModal(event);
+};
+ 
+function openModal(event) {
+  window.addEventListener('keydown', onEscCloseModal);
+  document.addEventListener('keydown', imageSlice);
+  modalEL.classList.add('is-open')
+  openImgModal(event);
+};
+
+function openImgModal(event){
+  
+  if (!(imgModal.src === "")) {
+    imgModal.src = "";
+  };
+
+  imgModal.src = event.target.dataset.source;
+};
+ 
+function closeModal() {
+  window.removeEventListener('keydown', onEscCloseModal);
+  document.removeEventListener('keydown', imageSlice);
+    modalEL.classList.remove('is-open');
+};
+
+function onModalOverlayClick(event) {
+  if (event.target === event.currentTarget) {
+    closeModal();
+  };
+};
+
+function onEscCloseModal(event) {
+  if (event.key === "Escape") {
+    closeModal();
+  }
+}
+
+function imageSlice(event) {
+  const currentIndex = sources.indexOf(imgModal.src);
+  if (event.key === "ArrowLeft") {
+    leftClick(currentIndex);
+  } else if (event.key === "ArrowRight") {
+    rightClick(currentIndex);
+  };
+};
+
+function leftClick(currentIndex) {
+  let nextIndex = currentIndex - 1;
+  if (nextIndex == -1) {
+    nextIndex = sources.length - 1;
+  }
+  imgModal.src = sources[nextIndex];
+};
+
+function rightClick(currentIndex) {
+  let nextIndex = currentIndex + 1;
+  if (nextIndex == sources.length) {
+    nextIndex = 0;
+  }
+  imgModal.src = sources[nextIndex];
+};
