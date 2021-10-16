@@ -105,10 +105,6 @@ function openModal(event) {
 };
 
 function openImgModal(event){
-  
-  if (!(imgModal.src === "")) {
-    imgModal.src = "";
-  };
 
   imgModal.src = event.target.dataset.source;
 };
@@ -117,6 +113,7 @@ function closeModal() {
   window.removeEventListener('keydown', onEscCloseModal);
   document.removeEventListener('keydown', imageSlice);
     modalEL.classList.remove('is-open');
+    imgModal.src = "";
 };
 
 function onModalOverlayClick(event) {
